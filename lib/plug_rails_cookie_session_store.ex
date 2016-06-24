@@ -79,6 +79,8 @@ defmodule PlugRailsCookieSessionStore do
   end
 
   def get(conn, cookie, opts) do
+    IO.inspect cookie
+    IO.inspect opts
     key_opts = opts.key_opts
     cookie = cookie |> URI.decode_www_form
     if key = opts.encryption_salt do
@@ -87,11 +89,14 @@ defmodule PlugRailsCookieSessionStore do
                                           derive(conn, opts.signing_salt, key_opts))
     else
       MessageVerifier.verify(cookie, derive(conn, opts.signing_salt, key_opts))
-    end |> decode(opts.serializer)
+    end |> IO.inspect |> decode(opts.serializer)
   end
 
 
   def put(conn, _sid, term, opts) do
+    IO.inspect _sid
+    IO.inspect term
+    IO.inspect opts
     binary = encode(term, opts.serializer)
     key_opts = opts.key_opts
     if key = opts.encryption_salt do
@@ -100,7 +105,7 @@ defmodule PlugRailsCookieSessionStore do
                                         derive(conn, opts.signing_salt, key_opts))
     else
       MessageVerifier.sign(binary, derive(conn, opts.signing_salt, key_opts))
-    end |> URI.encode_www_form
+    end |> IO.inspect |> URI.encode_www_form
   end
 
   def delete(_conn, _sid, _opts) do
